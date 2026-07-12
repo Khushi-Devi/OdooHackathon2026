@@ -7,24 +7,138 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  Admin
+  Manager
+  Employee
+}
+
+enum EmployeeStatus {
+  Active
+  Inactive
+}
+
+enum DepartmentStatus {
+  Active
+  Inactive
+}
+
+enum AssetStatus {
+  Available
+  Allocated
+  Maintenance
+  Retired
+}
+
+enum AllocationStatus {
+  Active
+  Returned
+}
+
+enum BookingStatus {
+  Upcoming
+  Active
+  Completed
+  Cancelled
+}
+
 model Department {
-  id        String     @id @default(uuid())
-  name      String
-  status    String     @default("Active")
-  createdAt DateTime   @default(now())
+  id     String           @id @default(uuid())
+  name   String           @unique
+  status DepartmentStatus @default(Active)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   employees Employee[]
 }
 
 model Employee {
-  id             String      @id @default(uuid())
-  name           String
-  email          String      @unique
-  passwordHash   String
-  role           String      @default("Employee")
-  status         String      @default("Active")
-  createdAt      DateTime    @default(now())
+  id           String @id @default(uuid())
+  name         String
+  email        String @unique
+  passwordHash String
 
-  departmentId   String?
-  department     Department? @relation(fields: [departmentId], references: [id])
+  role   UserRole       @default(Employee)
+  status EmployeeStatus @default(Active)
+
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  allocations Allocation[]
+  bookings    Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AssetCategory {
+  id   String @id @default(uuid())
+  name String @unique
+
+  assets Asset[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Asset {
+  id String @id @default(uuid())
+
+  tag  String @unique
+  name String
+
+  status AssetStatus @default(Available)
+
+  condition String?
+
+  isBookable Boolean @default(false)
+
+  riskScore Float @default(0)
+
+  categoryId String?
+  category   AssetCategory? @relation(fields: [categoryId], references: [id])
+
+  allocations Allocation[]
+  bookings    Booking[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Allocation {
+  id String @id @default(uuid())
+
+  assetId String
+  asset   Asset  @relation(fields: [assetId], references: [id])
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  status AllocationStatus @default(Active)
+
+  allocatedAt DateTime @default(now())
+
+  expectedReturnDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id String @id @default(uuid())
+
+  assetId String
+  asset   Asset  @relation(fields: [assetId], references: [id])
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  startTs DateTime
+  endTs   DateTime
+
+  status BookingStatus @default(Upcoming)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
