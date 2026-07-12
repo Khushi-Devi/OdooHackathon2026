@@ -45,13 +45,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Role check: Only Admin or Manager can allocate assets
+    if (session.role !== 'Admin' && session.role !== 'Manager') {
+      return NextResponse.json({ error: 'Forbidden: Only Admins or Managers can allocate assets' }, { status: 403 });
+    }
+
     const { assetId, employeeName, employeeEmail, expectedReturnDate } = await request.json();
 
     if (!assetId || (!employeeName && !employeeEmail)) {
       return NextResponse.json({ error: 'Asset and Custodian details are required' }, { status: 400 });
     }
 
-    // Find the employee by email, or name
+    // Find the employee/department by email or name
     let employee = null;
     if (employeeEmail) {
       employee = await prisma.employee.findUnique({
@@ -61,24 +66,23 @@ export async function POST(request: Request) {
 
     if (!employee && employeeName) {
       employee = await prisma.employee.findFirst({
-        where: { name: { contains: employeeName, mode: 'insensitive' } }
+        where: { name: { equals: employeeName, mode: 'insensitive' } }
       });
+      
+      // If still not found, check if it matches a department name, and get the first employee of that department
+      if (!employee) {
+        const dept = await prisma.department.findFirst({
+          where: { name: { equals: employeeName, mode: 'insensitive' } },
+          include: { employees: true }
+        });
+        if (dept && dept.employees.length > 0) {
+          employee = dept.employees[0];
+        }
+      }
     }
 
-    // If still not found, create a mock employee to make it work seamlessly
     if (!employee) {
-      const name = employeeName || 'New Employee';
-      const email = employeeEmail || `${name.toLowerCase().replace(/\s+/g, '')}@assetflow.com`;
-      const passwordHash = await bcrypt.hash('devpass', 10);
-      employee = await prisma.employee.create({
-        data: {
-          name,
-          email,
-          passwordHash,
-          role: 'Employee',
-          status: 'Active'
-        }
-      });
+      return NextResponse.json({ error: 'Custodian employee or department not found' }, { status: 404 });
     }
 
     const asset = await prisma.asset.findUnique({
@@ -89,16 +93,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
     }
 
-    // Complete any active allocation for this asset
-    await prisma.allocation.updateMany({
+    // Check if asset already has an active allocation (Double-allocation prevention)
+    const activeAllocation = await prisma.allocation.findFirst({
       where: {
         assetId,
         status: 'Active'
       },
-      data: {
-        status: 'Returned'
+      include: {
+        employee: true
       }
     });
+
+    if (activeAllocation) {
+      return NextResponse.json({
+        error: `Conflict: Asset is already allocated to ${activeAllocation.employee.name} (${activeAllocation.employee.email}).`
+      }, { status: 409 });
+    }
 
     // Create new allocation
     const allocation = await prisma.allocation.create({

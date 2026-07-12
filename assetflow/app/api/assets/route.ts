@@ -52,13 +52,15 @@ export async function GET(request: Request) {
     console.error('Fetch assets error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
-}
-
-export async function POST(request: Request) {
+}export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (session.role !== 'Admin' && session.role !== 'Manager') {
+      return NextResponse.json({ error: 'Forbidden: Only Admins or Managers can create assets' }, { status: 403 });
     }
 
     const { tag, name, categoryName, condition, isBookable, riskScore } = await request.json();

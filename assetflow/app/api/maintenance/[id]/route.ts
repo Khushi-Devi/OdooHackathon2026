@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
-
-export async function PUT(request: Request, context: any) {
+import { getSession } from '@/lib/auth';export async function PUT(request: Request, context: any) {
   try {
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (session.role !== 'Admin' && session.role !== 'Manager') {
+      return NextResponse.json({ error: 'Forbidden: Only Admins or Managers can update maintenance requests' }, { status: 403 });
     }
 
     const { id } = await context.params;
