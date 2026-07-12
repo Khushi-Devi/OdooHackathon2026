@@ -189,7 +189,7 @@ OdooHackathon2026/
 └── README.md
 ```
 
-> Update the folder names above to match your actual repo layout if they differ.
+
 
 ---
 
