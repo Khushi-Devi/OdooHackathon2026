@@ -1,26 +1,155 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-primary-container: #2563eb;
+  --color-on-primary: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-error: #ffffff;
+  --color-tertiary-fixed-dim: #ffb596;
+  --color-surface-container: #ededf9;
+  --color-inverse-surface: #2e3039;
+  --color-on-tertiary: #ffffff;
+  --color-outline: #737686;
+  --color-on-secondary-fixed: #0b1c30;
+  --color-on-primary-fixed: #00174b;
+  --color-secondary-container: #d0e1fb;
+  --color-background: #faf8ff;
+  --color-error: #ba1a1a;
+  --color-tertiary-container: #bc4800;
+  --color-secondary: #505f76;
+  --color-on-tertiary-fixed-variant: #7d2d00;
+  --color-surface-bright: #faf8ff;
+  --color-on-tertiary-fixed: #360f00;
+  --color-primary: #004ac6;
+  --color-on-secondary-fixed-variant: #38485d;
+  --color-on-secondary: #ffffff;
+  --color-on-surface-variant: #434655;
+  --color-secondary-fixed: #d3e4fe;
+  --color-on-secondary-container: #54647a;
+  --color-primary-fixed: #dbe1ff;
+  --color-on-primary-fixed-variant: #003ea8;
+  --color-tertiary-fixed: #ffdbcd;
+  --color-surface-container-high: #e7e7f3;
+  --color-secondary-fixed-dim: #b7c8e1;
+  --color-tertiary: #943700;
+  --color-primary-fixed-dim: #b4c5ff;
+  --color-surface-tint: #0053db;
+  --color-on-surface: #191b23;
+  --color-on-primary-container: #eeefff;
+  --color-inverse-primary: #b4c5ff;
+  --color-surface: #faf8ff;
+  --color-error-container: #ffdad6;
+  --color-on-background: #191b23;
+  --color-surface-container-highest: #e1e2ed;
+  --color-outline-variant: #c3c6d7;
+  --color-surface-variant: #e1e2ed;
+  --color-surface-dim: #d9d9e5;
+  --color-surface-container-low: #f3f3fe;
+  --color-on-error-container: #93000a;
+  --color-on-tertiary-container: #ffede6;
+  --color-inverse-on-surface: #f0f0fb;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Spacing */
+  --spacing-stack-md: 1rem;
+  --spacing-gutter-grid: 1.5rem;
+  --spacing-stack-xl: 2rem;
+  --spacing-margin-page: 2rem;
+  --spacing-stack-sm: 0.5rem;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Font Family override */
+  --font-sans: 'Inter', sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+  background-color: #F8FAFC;
+  color: #191b23;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Glass Card styling */
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Custom scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Floating labels */
+.floating-label-group {
+  position: relative;
+}
+
+.floating-label-group input:focus ~ label,
+.floating-label-group input:not(:placeholder-shown) ~ label {
+  top: -0.5rem;
+  left: 0.75rem;
+  font-size: 0.75rem;
+  color: #004ac6;
+  background: #ffffff;
+  padding: 0 0.25rem;
+}
+
+.floating-label-group label {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  transition: all 0.2s ease-out;
+  pointer-events: none;
+  color: #737686;
+}
+
+/* Timeline */
+.timeline-line {
+  position: absolute;
+  left: 19px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e1e2ed;
+  z-index: 0;
+}
+
+.timeline-dot {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  border-radius: 9999px;
+}
+
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
 }

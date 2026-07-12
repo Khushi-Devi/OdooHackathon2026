@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AssetFlow - Asset Directory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#2563eb",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "surface-container": "#ededf9",
+                        "inverse-surface": "#2e3039",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#737686",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-primary-fixed": "#00174b",
+                        "secondary-container": "#d0e1fb",
+                        "background": "#faf8ff",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#bc4800",
+                        "secondary": "#505f76",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-bright": "#faf8ff",
+                        "on-tertiary-fixed": "#360f00",
+                        "primary": "#004ac6",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#434655",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-secondary-container": "#54647a",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "tertiary-fixed": "#ffdbcd",
+                        "surface-container-high": "#e7e7f3",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "tertiary": "#943700",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-tint": "#0053db",
+                        "on-surface": "#191b23",
+                        "on-primary-container": "#eeefff",
+                        "inverse-primary": "#b4c5ff",
+                        "surface": "#faf8ff",
+                        "error-container": "#ffdad6",
+                        "on-background": "#191b23",
+                        "surface-container-highest": "#e1e2ed",
+                        "outline-variant": "#c3c6d7",
+                        "surface-variant": "#e1e2ed",
+                        "surface-dim": "#d9d9e5",
+                        "surface-container-low": "#f3f3fe",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#ffede6",
+                        "inverse-on-surface": "#f0f0fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "1rem",
+                        "gutter-grid": "1.5rem",
+                        "stack-xl": "2rem",
+                        "margin-page": "2rem",
+                        "stack-sm": "0.5rem"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-xl-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["18px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .glass-effect {
+            backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        .sticky-header th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #ffffff;
+        }
+        .row-hover:hover {
+            background-color: #F8FAFC;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen flex flex-col z-40 w-64 bg-surface-container-lowest border-r border-outline-variant">
+<div class="p-6">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary-container rounded flex items-center justify-center text-white font-black text-xl">A</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-black text-primary">AssetFlow</h1>
+<p class="text-[10px] uppercase tracking-widest text-outline">Enterprise Management</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="dashboard.html">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-primary font-bold border-l-4 border-primary rounded-r-lg" href="assets.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Assets</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="allocation.html">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">sync_alt</span>
+<span class="font-body-md text-body-md">Allocation</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="bookings.html">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">event_available</span>
+<span class="font-body-md text-body-md">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="maintenance.html">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">build</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">fact_check</span>
+<span class="font-body-md text-body-md">Audit</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</nav>
+<div class="mt-auto p-4 border-t border-outline-variant">
+<button class="w-full bg-primary text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-primary-container transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">add</span>
+<span class="text-sm">Add New Asset</span>
+</button>
+<div class="mt-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="font-body-md text-body-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all" href="login.html">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="font-body-md text-body-md">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="h-16 flex items-center justify-between px-gutter-grid border-b border-outline-variant bg-surface/80 backdrop-blur-md sticky top-0 z-30">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:ring-offset-0 transition-all outline-none text-on-surface" placeholder="Search assets, serial numbers, or owners..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-on-secondary-container hover:bg-surface-container-highest transition-all rounded-lg">
+<span class="material-symbols-outlined">file_download</span>
+                    Quick Export
+                </button>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-outline hover:text-primary hover:bg-surface-container rounded-full transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="p-2 text-outline hover:text-primary hover:bg-surface-container rounded-full relative transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+</div>
+<div class="flex items-center gap-3 pl-2 cursor-pointer hover:bg-surface-container p-1 rounded-lg transition-all">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA18L-FG02kyO9C3JNSg9rUH8F6OAkyvXc6WThNQNnQFUKoWkwFO6IOMLlOAF2-CMl5x3aqaGQRmYmZVyToqAQ22_Jrxv8aJoNFRVAao_KgVckZr7u4EBzU1Ju6Jys4smENy9NwWk43LT8euXajBXqKEYR8YbD55DUuGJ6JgeC3NKNltVhHRurlYDUmSoBlrGdoqpXa-UtLDpGQVBWo_IVEGsRX9inDtvMRLGtlib0gM0SjKoNRff_BaY8oo744hdtjf9bMi-kopPHj"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-gutter-grid space-y-6 max-w-[1600px] mx-auto w-full">
+<!-- Page Header & Filters -->
+<div class="flex flex-col gap-4">
+<div class="flex items-end justify-between">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface">Asset Directory</h2>
+<p class="text-on-surface-variant font-body-md mt-1">Manage and track your organization's physical and digital resources.</p>
+</div>
+<button class="bg-primary-container text-on-primary px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">add_circle</span>
+                        Register Asset
+                    </button>
+</div>
+<div class="flex flex-wrap items-center gap-3 pt-2">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-white border border-outline-variant rounded-full text-xs font-semibold text-on-surface-variant cursor-pointer hover:border-primary transition-all">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+                        Category: All
+                        <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-white border border-outline-variant rounded-full text-xs font-semibold text-on-surface-variant cursor-pointer hover:border-primary transition-all">
+                        Status: Active
+                        <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-white border border-outline-variant rounded-full text-xs font-semibold text-on-surface-variant cursor-pointer hover:border-primary transition-all">
+                        Department: Engineering
+                        <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</div>
+<div class="h-4 w-[1px] bg-outline-variant mx-1"></div>
+<button class="text-xs font-bold text-primary hover:underline">Clear all filters</button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="sticky-header border-b border-outline-variant">
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Asset Tag</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Asset Name</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Category</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Department</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Location</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="row-hover transition-colors group" onclick="window.location.href='allocation.html'">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">laptop_mac</span>
+</div>
+<span class="font-mono text-xs font-bold text-on-surface">AF-2024-001</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="font-body-md text-on-surface font-semibold">MacBook Pro M3 Max</div>
+<div class="text-[12px] text-on-surface-variant">S/N: C02G12345678</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">Computing</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">Product Design</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">HQ - Floor 4</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+                                        Active
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1.5 text-outline hover:text-primary hover:bg-surface-container rounded-lg transition-all opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="row-hover transition-colors group" onclick="window.location.href='allocation.html'">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">router</span>
+</div>
+<span class="font-mono text-xs font-bold text-on-surface">AF-2024-042</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="font-body-md text-on-surface font-semibold">Enterprise Core Router</div>
+<div class="text-[12px] text-on-surface-variant">S/N: RT-990-XP</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">Networking</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">IT Infra</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">Server Room A</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+                                        Active
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1.5 text-outline hover:text-primary hover:bg-surface-container rounded-lg transition-all opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="row-hover transition-colors group" onclick="window.location.href='maintenance.html'">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">desk</span>
+</div>
+<span class="font-mono text-xs font-bold text-on-surface">AF-2023-912</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="font-body-md text-on-surface font-semibold">Herman Miller Aeron</div>
+<div class="text-[12px] text-on-surface-variant">Batch: Q3-Furniture</div>
+</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">Furniture</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">Operations</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">HQ - Floor 2</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
+<span class="w-1.5 h-1.5 rounded-full bg-orange-600"></span>
+                                        Maintenance
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-1.5 text-outline hover:text-primary hover:bg-surface-container rounded-lg transition-all opacity-0 group-hover:opacity-100">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Footer / Pagination -->
+<div class="px-6 py-4 border-t border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<span class="text-sm text-on-surface-variant">Showing <span class="font-bold text-on-surface">1-3</span> of <span class="font-bold text-on-surface">3</span> assets</span>
+<div class="flex items-center gap-1">
+<button class="p-2 text-outline hover:bg-surface-container rounded-lg disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 text-outline hover:bg-surface-container rounded-lg transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

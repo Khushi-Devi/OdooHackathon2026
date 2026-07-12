@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AssetFlow - Allocation &amp; Transfer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#2563eb",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "surface-container": "#ededf9",
+                        "inverse-surface": "#2e3039",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#737686",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-primary-fixed": "#00174b",
+                        "secondary-container": "#d0e1fb",
+                        "background": "#faf8ff",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#bc4800",
+                        "secondary": "#505f76",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-bright": "#faf8ff",
+                        "on-tertiary-fixed": "#360f00",
+                        "primary": "#004ac6",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#434655",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-secondary-container": "#54647a",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "tertiary-fixed": "#ffdbcd",
+                        "surface-container-high": "#e7e7f3",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "tertiary": "#943700",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-tint": "#0053db",
+                        "on-surface": "#191b23",
+                        "on-primary-container": "#eeefff",
+                        "inverse-primary": "#b4c5ff",
+                        "surface": "#faf8ff",
+                        "error-container": "#ffdad6",
+                        "on-background": "#191b23",
+                        "surface-container-highest": "#e1e2ed",
+                        "outline-variant": "#c3c6d7",
+                        "surface-variant": "#e1e2ed",
+                        "surface-dim": "#d9d9e5",
+                        "surface-container-low": "#f3f3fe",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#ffede6",
+                        "inverse-on-surface": "#f0f0fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "1rem",
+                        "gutter-grid": "1.5rem",
+                        "stack-xl": "2rem",
+                        "margin-page": "2rem",
+                        "stack-sm": "0.5rem"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-xl-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["18px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .floating-label-group {
+            position: relative;
+        }
+        .floating-label-group input:focus ~ label,
+        .floating-label-group input:not(:placeholder-shown) ~ label,
+        .floating-label-group textarea:focus ~ label,
+        .floating-label-group textarea:not(:placeholder-shown) ~ label {
+            top: -0.5rem;
+            left: 0.75rem;
+            font-size: 0.75rem;
+            color: #004ac6;
+            background: #ffffff;
+            padding: 0 0.25rem;
+        }
+        .floating-label-group label {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            transition: all 0.2s ease-out;
+            pointer-events: none;
+            color: #737686;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Navigation Side Shell -->
+<aside class="fixed left-0 top-0 h-screen flex flex-col z-40 w-64 bg-surface-container-lowest border-r border-outline-variant">
+<div class="p-6">
+<h1 class="font-headline-lg text-headline-lg font-black text-primary">AssetFlow</h1>
+<p class="text-[10px] uppercase tracking-widest text-outline">Enterprise Management</p>
+</div>
+<nav class="flex-1 px-3 space-y-1 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="dashboard.html">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="assets.html">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">inventory_2</span>
+<span class="font-body-md text-body-md">Assets</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-primary font-bold border-l-4 border-primary rounded-r-lg" href="allocation.html">
+<span class="material-symbols-outlined">sync_alt</span>
+<span class="font-body-md text-body-md">Allocation</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="bookings.html">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">event_available</span>
+<span class="font-body-md text-body-md">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="maintenance.html">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">build</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">fact_check</span>
+<span class="font-body-md text-body-md">Audit</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</nav>
+<div class="mt-auto p-4 border-t border-outline-variant flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container rounded-lg" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-body-md text-body-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all" href="login.html">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-md text-body-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- App Frame Shell -->
+<div class="pl-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="h-16 flex items-center justify-between px-gutter-grid border-b border-outline-variant bg-surface/80 backdrop-blur-md sticky top-0 z-30">
+<div class="flex items-center gap-3 text-on-surface-variant font-label-sm text-label-sm">
+<span>Assets</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span>Allocation &amp; Transfer</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-bold">#AST-99201 MacBook Pro 16"</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-on-secondary-container hover:bg-surface-container-highest transition-all rounded-lg">
+<span class="material-symbols-outlined">file_download</span>
+                    Quick Export
+                </button>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<button class="py-2 px-6 bg-primary text-on-primary rounded-lg font-label-sm text-label-sm hover:opacity-90 transition-all" onclick="window.location.href='bookings.html'">
+                Create Booking
+            </button>
+<div class="flex items-center gap-3 pl-2 cursor-pointer hover:bg-surface-container p-1 rounded-lg transition-all">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKjxJ2EhLU9cgOhSo1sOSKO3_qcB8qwyCqd40owQh3gnU-4MaP-n7z9fyRyvEfCj3Qo-QZKsIkEj9xrh7MTLhGPQgTfzWg7zxgweSJ2ASvwbmyZCxhwHxxL0UPYfcGEOp5Dr2N6owuXoGhkYxtNRfBZN0y5gZ3LujSLYR96EBgPfEUjJcg35MHtX8odo4Ygiieo4iW5JLYH56g8TEWG25HCGJWxQoEq1FIVjo1afIr63LC7JWTG6KNJ0KtwVEFryaSfYykvTOJbxOb"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-gutter-grid space-y-6 max-w-[1600px] mx-auto w-full flex-grow">
+<div class="grid grid-cols-12 gap-gutter-grid">
+<!-- Left Panel (Asset Specs Details) -->
+<section class="col-span-12 lg:col-span-5 space-y-6">
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<div class="relative h-64 w-full bg-surface-container-high">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdTKGWDNFNV973Ro6nYgsD1yl4FBwCnNUc0z7IbJA6Zpx7LZ21MKMNn62je8niTsq2w5aLGO6_rgU1gEhwwoLMMxl-wOGW8vweJR_rG0QUEwSXibYGYEnDOLt09H1d5tknZGrqzdbBz_sM1LlkJ-KYcl5AgQRNgKTnzK25Vbbl7KtM9QqVEoqYrSlXMnE3jlQSWO9iGtVupPYAQcKyvdfhjw9TCMLYvkBrWNtRcgMIXOYB2VoCK2oRz8tTgoXgaNGFvD19-tk9toaE"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="bg-primary/90 text-on-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">Premium Tier</span>
+<span class="bg-white/95 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-primary-container">IT Asset</span>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">MacBook Pro 16" (Space Gray)</h2>
+<p class="text-[12px] text-outline mt-1 font-semibold uppercase tracking-wider">Asset ID: #AST-99201</p>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-2">
+<div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/30">
+<p class="text-outline font-label-sm text-[11px] uppercase tracking-wider font-bold">Status</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
+<span class="font-body-md text-body-md font-bold text-on-surface">Available</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/30">
+<p class="text-outline font-label-sm text-[11px] uppercase tracking-wider font-bold">Condition</p>
+<p class="font-body-md text-body-md font-bold text-on-surface flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-sm text-primary">verified</span>
+                                        Excellent
+                                    </p>
+</div>
+</div>
+<div class="pt-2">
+<h3 class="font-label-sm text-label-sm text-outline uppercase tracking-wider mb-3">Specifications</h3>
+<ul class="space-y-2 font-body-md text-body-md">
+<li class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+<span class="text-on-surface-variant">Processor</span>
+<span class="font-semibold">Apple M3 Max (16-core)</span>
+</li>
+<li class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+<span class="text-on-surface-variant">Memory</span>
+<span class="font-semibold">64GB Unified RAM</span>
+</li>
+<li class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+<span class="text-on-surface-variant">Storage</span>
+<span class="font-semibold">1TB SSD NVMe</span>
+</li>
+<li class="flex justify-between items-center">
+<span class="text-on-surface-variant">Warranty Expires</span>
+<span class="font-semibold text-tertiary-container">Oct 12, 2026</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Panel (Allocation Assignment Form) -->
+<section class="col-span-12 lg:col-span-7">
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant p-8 h-full flex flex-col justify-between">
+<div class="mb-6">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Asset Allocation</h2>
+<p class="text-on-surface-variant font-body-md mt-1">Define the custodian or department responsible for this asset.</p>
+</div>
+<form class="space-y-6 flex-grow" id="allocationForm">
+<div>
+<label class="font-label-sm text-label-sm text-outline uppercase tracking-wider block mb-4">Allocate To</label>
+<div class="inline-flex p-1 bg-surface-container rounded-xl border border-outline-variant/50">
+<button class="px-8 py-2 rounded-lg bg-white shadow-sm font-label-sm text-label-sm font-bold text-primary" type="button">Employee</button>
+<button class="px-8 py-2 rounded-lg font-label-sm text-label-sm font-semibold text-on-surface-variant hover:text-on-surface" type="button">Department</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="floating-label-group">
+<input class="w-full px-4 py-4 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md text-body-md" id="custodian" placeholder=" " required="" type="text" value="Sarah Jenkins"/>
+<label class="font-label-sm text-label-sm" for="custodian">Search Employee Name</label>
+</div>
+<div class="floating-label-group">
+<input class="w-full px-4 py-4 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md text-body-md" id="project" placeholder=" " required="" type="text" value="PRJ-DESIGN-2024"/>
+<label class="font-label-sm text-label-sm" for="project">Project Code</label>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase tracking-wider mb-2">Allocation Start Date</label>
+<input class="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg font-body-md text-body-md focus:ring-2 focus:ring-primary focus:border-primary outline-none" type="date" value="2024-10-24"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-outline uppercase tracking-wider mb-2">Expected Return Date</label>
+<input class="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg font-body-md text-body-md focus:ring-2 focus:ring-primary focus:border-primary outline-none" type="date" value="2025-10-24"/>
+</div>
+</div>
+<div class="floating-label-group">
+<textarea class="w-full px-4 py-4 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-md text-body-md resize-none" id="notes" placeholder=" " rows="4">Premium designer workstation. Assigned for Q4 creative layout and strategic planning work.</textarea>
+<label class="font-label-sm text-label-sm" for="notes">Allocation Notes &amp; Purpose</label>
+</div>
+</form>
+<div class="pt-6 border-t border-outline-variant flex justify-end gap-4 mt-6">
+<button class="px-6 py-3 font-label-sm text-label-sm font-semibold text-on-surface-variant hover:text-on-surface transition-all" onclick="window.location.href='assets.html'">Discard</button>
+<button class="px-10 py-3 bg-primary text-on-primary font-label-sm text-label-sm font-bold rounded-xl shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95" onclick="alert('Asset allocated successfully!'); window.location.href='assets.html'">Confirm Allocation</button>
+</div>
+</div>
+</section>
+</div>
+<!-- History Logs Grid -->
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant overflow-hidden mt-6">
+<div class="p-6 border-b border-outline-variant flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                    Allocation History &amp; Audit Trail
+                </h2>
+<div class="text-xs font-semibold text-outline-variant">3 Historical Handovers</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-outline font-label-sm text-label-sm uppercase">
+<th class="px-6 py-4 font-medium">Action</th>
+<th class="px-6 py-4 font-medium">Custodian</th>
+<th class="px-6 py-4 font-medium">Dept/Project</th>
+<th class="px-6 py-4 font-medium">Date Range</th>
+<th class="px-6 py-4 font-medium">Status</th>
+<th class="px-6 py-4 font-medium">Verified By</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 font-body-md text-body-md">
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">assignment_return</span>
+<span class="font-semibold text-on-surface">Asset Return</span>
+</div>
+</td>
+<td class="px-6 py-4">Sarah Jenkins</td>
+<td class="px-6 py-4">Product Design</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">Oct 12, 2023 - Present</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-primary/20 bg-primary/5 text-primary uppercase">Current</span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">
+<div class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-primary">verified</span>Marcus Webb</div>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">transfer_within_a_station</span>
+<span class="font-semibold text-on-surface">Asset Transfer</span>
+</div>
+</td>
+<td class="px-6 py-4">John Doe</td>
+<td class="px-6 py-4">Engineering</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">Jan 15, 2023 - Oct 10, 2023</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold border border-outline-variant bg-surface-container text-on-surface-variant uppercase">Completed</span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant text-sm">
+<div class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-primary">verified</span>System Admin</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</body></html>

@@ -68,6 +68,9 @@ model Employee {
   allocations Allocation[]
   bookings    Booking[]
 
+  requestedMaintenance MaintenanceRequest[] @relation("RequestedBy")
+  assignedMaintenance   MaintenanceRequest[] @relation("AssignedTo")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -101,6 +104,7 @@ model Asset {
 
   allocations Allocation[]
   bookings    Booking[]
+  maintenance MaintenanceRequest[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -141,4 +145,50 @@ model Booking {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum MaintenancePriority {
+  Low
+  Medium
+  Urgent
+  Critical
+}
+
+enum MaintenanceStatus {
+  Raised
+  Approved
+  Assigned
+  InProgress
+  Resolved
+}
+
+model MaintenanceRequest {
+  id            String              @id @default(uuid())
+  assetId       String
+  asset         Asset               @relation(fields: [assetId], references: [id])
+  title         String
+  description   String
+  priority      MaintenancePriority @default(Medium)
+  status        MaintenanceStatus   @default(Raised)
+
+  requestedById String
+  requestedBy   Employee            @relation("RequestedBy", fields: [requestedById], references: [id])
+
+  assignedToId  String?
+  assignedTo    Employee?           @relation("AssignedTo", fields: [assignedToId], references: [id])
+
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  timeline      TimelineEvent[]
+}
+
+model TimelineEvent {
+  id          String             @id @default(uuid())
+  requestId   String
+  request     MaintenanceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  title       String
+  notes       String?
+  status      String
+  timestamp   DateTime           @default(now())
 }
