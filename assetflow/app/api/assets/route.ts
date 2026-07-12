@@ -9,12 +9,28 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const employee = await prisma.employee.findUnique({
+      where: { id: session.id },
+      select: { departmentId: true }
+    });
+    const deptId = employee?.departmentId;
+
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
     const category = searchParams.get('category') || '';
 
     const where: any = {};
+
+    if (session.role === 'Employee') {
+      where.allocations = {
+        some: { employeeId: session.id, status: 'Active' }
+      };
+    } else if (session.role === 'DepartmentHead' && deptId) {
+      where.allocations = {
+        some: { employee: { departmentId: deptId }, status: 'Active' }
+      };
+    }
 
     if (search) {
       where.OR = [
@@ -59,6 +75,10 @@ export async function POST(request: Request) {
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (session.role !== 'Admin' && session.role !== 'AssetManager') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { tag, name, categoryName, condition, isBookable, riskScore } = await request.json();

@@ -41,6 +41,29 @@ function AllocationContent() {
   
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  
+  const [user, setUser] = useState<any>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => {
+        if (!res.ok) throw new Error('Not authenticated');
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data.user);
+        if (data.user.role !== 'Admin' && data.user.role !== 'AssetManager') {
+          router.push('/');
+        }
+      })
+      .catch(() => {
+        router.push('/login');
+      })
+      .finally(() => {
+        setLoadingUser(false);
+      });
+  }, [router]);
 
   useEffect(() => {
     fetch('/api/assets')
@@ -107,6 +130,21 @@ function AllocationContent() {
       setSubmitting(false);
     }
   };
+
+  if (loadingUser) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="animate-spin h-8 w-8 text-blue-600 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+          <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Verifying Permissions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (user?.role !== 'Admin' && user?.role !== 'AssetManager') {
+    return null;
+  }
 
   return (
     <div className="space-y-6">

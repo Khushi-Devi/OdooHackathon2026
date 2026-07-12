@@ -34,6 +34,10 @@ export default function Sidebar() {
     { label: 'Maintenance', path: '/maintenance', icon: 'build' },
   ];
 
+  if (user && user.role === 'Admin') {
+    navItems.push({ label: 'Admin Panel', path: '/admin', icon: 'shield' });
+  }
+
   const triggerNewAsset = () => {
     window.dispatchEvent(new Event('open-new-asset-modal'));
   };

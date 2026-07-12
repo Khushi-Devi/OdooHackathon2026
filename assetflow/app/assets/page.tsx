@@ -25,6 +25,17 @@ export default function AssetsPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error('Not logged in');
+      })
+      .then((data) => setUser(data.user))
+      .catch(() => router.push('/login'));
+  }, [router]);
 
   const fetchAssets = async () => {
     try {
@@ -81,13 +92,15 @@ export default function AssetsPage() {
             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Asset Directory</h2>
             <p className="text-sm text-slate-500 mt-1">Manage and track your organization's physical and digital resources.</p>
           </div>
-          <button
-            onClick={triggerRegisterModal}
-            className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10 cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-base">add_circle</span>
-            Register Asset
-          </button>
+          {(user?.role === 'Admin' || user?.role === 'AssetManager') && (
+            <button
+              onClick={triggerRegisterModal}
+              className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-base">add_circle</span>
+              Register Asset
+            </button>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -219,12 +232,14 @@ export default function AssetsPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={() => navigateToAllocation(asset.id)}
-                          className="px-3 py-1.5 border border-slate-200 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-100 transition-all cursor-pointer mr-2"
-                        >
-                          Allocate
-                        </button>
+                        {(user?.role === 'Admin' || user?.role === 'AssetManager') && (
+                          <button
+                            onClick={() => navigateToAllocation(asset.id)}
+                            className="px-3 py-1.5 border border-slate-200 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-100 transition-all cursor-pointer mr-2"
+                          >
+                            Allocate
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );

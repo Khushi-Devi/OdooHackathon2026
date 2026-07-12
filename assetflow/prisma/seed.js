@@ -43,7 +43,7 @@ async function main() {
       name: 'Sarah Jenkins',
       email: 'sarah@assetflow.com',
       passwordHash,
-      role: UserRole.Manager,
+      role: UserRole.DepartmentHead,
       status: EmployeeStatus.Active,
       departmentId: productDesign.id
     }
@@ -65,7 +65,7 @@ async function main() {
       name: 'Tom Wilson',
       email: 'tom@assetflow.com',
       passwordHash,
-      role: UserRole.Employee,
+      role: UserRole.AssetManager,
       status: EmployeeStatus.Active,
       departmentId: itInfra.id
     }

@@ -5,14 +5,14 @@ import { setSession } from '@/lib/auth';
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json();
+    const { email, password, rememberMe } = await request.json();
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
     const employee = await prisma.employee.findUnique({
-      where: { email },
+      where: { email: email.toLowerCase().trim() },
     });
 
     if (!employee) {
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       email: employee.email,
       name: employee.name,
       role: employee.role,
-    });
+    }, !!rememberMe);
 
     return NextResponse.json({
       success: true,

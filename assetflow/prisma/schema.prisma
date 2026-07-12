@@ -9,7 +9,8 @@ datasource db {
 
 enum UserRole {
   Admin
-  Manager
+  AssetManager
+  DepartmentHead
   Employee
 }
 
@@ -70,6 +71,9 @@ model Employee {
 
   requestedMaintenance MaintenanceRequest[] @relation("RequestedBy")
   assignedMaintenance   MaintenanceRequest[] @relation("AssignedTo")
+
+  resetToken       String?
+  resetTokenExpiry DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

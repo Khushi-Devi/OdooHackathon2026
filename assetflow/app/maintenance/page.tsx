@@ -29,6 +29,7 @@ export default function MaintenancePage() {
   
   const [updating, setUpdating] = useState(false);
   const [notes, setNotes] = useState('');
+  const [user, setUser] = useState<any>(null);
 
   const fetchRequests = async (selectId?: string) => {
     try {
@@ -50,6 +51,10 @@ export default function MaintenancePage() {
 
   useEffect(() => {
     fetchRequests();
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => setUser(data.user))
+      .catch(() => {});
   }, []);
 
   const handleUpdateStatus = async (nextStatus: string) => {
@@ -350,63 +355,69 @@ export default function MaintenancePage() {
                   </div>
                 </div>
 
-                <div className="p-6 bg-slate-50 border-t border-slate-200 space-y-4">
-                  <div className="floating-label-group">
-                    <input
-                      type="text"
-                      id="workflow-notes"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      className="w-full px-3 py-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none text-xs text-slate-800 transition-all"
-                      placeholder=" "
-                    />
-                    <label htmlFor="workflow-notes" className="text-xs">Add Action Notes...</label>
+                {(user?.role === 'Admin' || user?.role === 'AssetManager') ? (
+                  <div className="p-6 bg-slate-50 border-t border-slate-200 space-y-4">
+                    <div className="floating-label-group">
+                      <input
+                        type="text"
+                        id="workflow-notes"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        className="w-full px-3 py-3 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none text-xs text-slate-800 transition-all"
+                        placeholder=" "
+                      />
+                      <label htmlFor="workflow-notes" className="text-xs">Add Action Notes...</label>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      {selectedRequest.status === 'Raised' && (
+                        <button
+                          onClick={() => handleUpdateStatus('Approved')}
+                          disabled={updating}
+                          className="flex-1 py-3 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
+                        >
+                          Approve Ticket
+                        </button>
+                      )}
+                      {selectedRequest.status === 'Approved' && (
+                        <button
+                          onClick={() => handleUpdateStatus('Assigned')}
+                          disabled={updating}
+                          className="flex-1 py-3 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
+                        >
+                          Assign Technician
+                        </button>
+                      )}
+                      {selectedRequest.status === 'Assigned' && (
+                        <button
+                          onClick={() => handleUpdateStatus('InProgress')}
+                          disabled={updating}
+                          className="flex-1 py-3 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
+                        >
+                          Start Work
+                        </button>
+                      )}
+                      {selectedRequest.status === 'InProgress' && (
+                        <button
+                          onClick={() => handleUpdateStatus('Resolved')}
+                          disabled={updating}
+                          className="flex-1 py-3 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition-colors cursor-pointer"
+                        >
+                          Resolve Ticket
+                        </button>
+                      )}
+                      {selectedRequest.status === 'Resolved' && (
+                        <div className="w-full py-3 bg-slate-100 text-slate-500 rounded-lg text-xs font-bold text-center">
+                          Ticket Resolved & Closed
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  
-                  <div className="flex gap-2">
-                    {selectedRequest.status === 'Raised' && (
-                      <button
-                        onClick={() => handleUpdateStatus('Approved')}
-                        disabled={updating}
-                        className="flex-1 py-3 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
-                      >
-                        Approve Ticket
-                      </button>
-                    )}
-                    {selectedRequest.status === 'Approved' && (
-                      <button
-                        onClick={() => handleUpdateStatus('Assigned')}
-                        disabled={updating}
-                        className="flex-1 py-3 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
-                      >
-                        Assign Technician
-                      </button>
-                    )}
-                    {selectedRequest.status === 'Assigned' && (
-                      <button
-                        onClick={() => handleUpdateStatus('InProgress')}
-                        disabled={updating}
-                        className="flex-1 py-3 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
-                      >
-                        Start Work
-                      </button>
-                    )}
-                    {selectedRequest.status === 'InProgress' && (
-                      <button
-                        onClick={() => handleUpdateStatus('Resolved')}
-                        disabled={updating}
-                        className="flex-1 py-3 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition-colors cursor-pointer"
-                      >
-                        Resolve Ticket
-                      </button>
-                    )}
-                    {selectedRequest.status === 'Resolved' && (
-                      <div className="w-full py-3 bg-slate-100 text-slate-500 rounded-lg text-xs font-bold text-center">
-                        Ticket Resolved & Closed
-                      </div>
-                    )}
+                ) : (
+                  <div className="p-6 bg-slate-50 border-t border-slate-200 text-center text-xs text-slate-500 font-semibold italic">
+                    Awaiting authorization or action from Asset Manager
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>

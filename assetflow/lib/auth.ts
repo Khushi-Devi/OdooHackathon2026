@@ -19,14 +19,14 @@ export async function getSession(): Promise<UserSession | null> {
   }
 }
 
-export async function setSession(user: { id: string; email: string; name: string; role: string }) {
+export async function setSession(user: { id: string; email: string; name: string; role: string }, rememberMe = false) {
   const cookieStore = await cookies();
   const base64 = Buffer.from(JSON.stringify(user)).toString('base64');
   cookieStore.set('assetflow_session', base64, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 1 week
+    maxAge: rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24, // 30 days or 1 day
     path: '/'
   });
 }

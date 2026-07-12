@@ -11,8 +11,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const existing = await prisma.employee.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (existing) {
@@ -29,7 +31,7 @@ export async function POST(request: Request) {
     const employee = await prisma.employee.create({
       data: {
         name,
-        email,
+        email: normalizedEmail,
         passwordHash,
         role: 'Employee',
         status: 'Active',

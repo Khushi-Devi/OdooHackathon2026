@@ -3,14 +3,25 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+type AuthMode = 'login' | 'signup' | 'forgot' | 'reset';
+
 export default function LoginPage() {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<AuthMode>('login');
+  
+  // Form fields
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [token, setToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  
+  // UI states
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [generatedToken, setGeneratedToken] = useState('');
 
   useEffect(() => {
     // Check if already logged in
@@ -27,23 +38,56 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError('');
-
-    const url = isLogin ? '/api/auth/login' : '/api/auth/register';
-    const body = isLogin ? { email, password } : { name, email, password };
+    setSuccessMessage('');
+    setGeneratedToken('');
 
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Authentication failed');
+      if (mode === 'login') {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, rememberMe }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Invalid credentials');
+        router.push('/');
+      } else if (mode === 'signup') {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Registration failed');
+        router.push('/');
+      } else if (mode === 'forgot') {
+        const res = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to request reset token');
+        
+        setSuccessMessage('Password reset token generated successfully!');
+        if (data.token) {
+          setGeneratedToken(data.token);
+          // Prefill for reset
+          setToken(data.token);
+        }
+      } else if (mode === 'reset') {
+        const res = await fetch('/api/auth/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, token, newPassword }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to reset password');
+        
+        setSuccessMessage('Password reset successful! You can now log in.');
+        setMode('login');
+        setPassword('');
       }
-
-      router.push('/');
     } catch (err: any) {
       setError(err.message || 'An error occurred. Please try again.');
     } finally {
@@ -111,31 +155,37 @@ export default function LoginPage() {
               <span className="text-2xl font-black text-slate-800">AssetFlow</span>
             </div>
 
-            <div className="mb-10">
+            <div className="mb-8">
               <h3 className="text-2xl font-bold text-slate-900 mb-2">
-                {isLogin ? 'Welcome back' : 'Create an Account'}
+                {mode === 'login' && 'Welcome back'}
+                {mode === 'signup' && 'Create an Account'}
+                {mode === 'forgot' && 'Forgot Password'}
+                {mode === 'reset' && 'Reset Password'}
               </h3>
               <p className="text-sm text-slate-500">
-                {isLogin
-                  ? 'Enter your credentials to access the enterprise dashboard.'
-                  : 'Get started by creating a new account on our platform.'}
+                {mode === 'login' && 'Enter your credentials to access the enterprise dashboard.'}
+                {mode === 'signup' && 'Get started by creating a new account on our platform.'}
+                {mode === 'forgot' && 'Provide your email to receive a temporary reset token.'}
+                {mode === 'reset' && 'Enter the reset token along with your new password.'}
               </p>
             </div>
 
             {/* Auth Tabs */}
             <div className="flex p-1 bg-slate-100 rounded-lg mb-8">
               <button
-                onClick={() => { setIsLogin(true); setError(''); }}
-                className={`flex-1 py-2 px-4 rounded-md text-xs font-semibold transition-all ${
-                  isLogin ? 'bg-white shadow-sm text-blue-600 font-bold' : 'text-slate-500 hover:text-slate-800'
+                type="button"
+                onClick={() => { setMode('login'); setError(''); setSuccessMessage(''); }}
+                className={`flex-1 py-2 px-4 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                  mode === 'login' ? 'bg-white shadow-sm text-blue-600 font-bold' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
                 Sign In
               </button>
               <button
-                onClick={() => { setIsLogin(false); setError(''); }}
-                className={`flex-1 py-2 px-4 rounded-md text-xs font-semibold transition-all ${
-                  !isLogin ? 'bg-white shadow-sm text-blue-600 font-bold' : 'text-slate-500 hover:text-slate-800'
+                type="button"
+                onClick={() => { setMode('signup'); setError(''); setSuccessMessage(''); }}
+                className={`flex-1 py-2 px-4 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                  mode === 'signup' ? 'bg-white shadow-sm text-blue-600 font-bold' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
                 Create Account
@@ -148,9 +198,31 @@ export default function LoginPage() {
               </div>
             )}
 
+            {successMessage && (
+              <div className="mb-4 p-3 bg-green-50 text-green-700 text-xs font-semibold rounded-lg">
+                {successMessage}
+              </div>
+            )}
+
+            {generatedToken && (
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-xl space-y-2">
+                <p className="text-xs text-blue-600 font-bold uppercase tracking-wider">Generated Verification Token</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-black text-blue-700 tracking-widest">{generatedToken}</span>
+                  <button
+                    type="button"
+                    onClick={() => setMode('reset')}
+                    className="px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-lg hover:bg-blue-700 transition-all cursor-pointer"
+                  >
+                    Go to Reset Form
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              {!isLogin && (
+              {mode === 'signup' && (
                 <div className="floating-label-group">
                   <input
                     type="text"
@@ -165,44 +237,115 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <div className="floating-label-group">
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none text-sm text-slate-800 transition-all"
-                  placeholder=" "
-                  required
-                />
-                <label htmlFor="email">Corporate Email Address</label>
-              </div>
+              {(mode === 'login' || mode === 'signup' || mode === 'forgot' || mode === 'reset') && (
+                <div className="floating-label-group">
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none text-sm text-slate-800 transition-all"
+                    placeholder=" "
+                    required
+                  />
+                  <label htmlFor="email">Corporate Email Address</label>
+                </div>
+              )}
 
-              <div className="floating-label-group">
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none text-sm text-slate-800 transition-all"
-                  placeholder=" "
-                  required
-                />
-                <label htmlFor="password">Password</label>
-              </div>
+              {(mode === 'login' || mode === 'signup') && (
+                <div className="floating-label-group">
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none text-sm text-slate-800 transition-all"
+                    placeholder=" "
+                    required
+                  />
+                  <label htmlFor="password">Password</label>
+                </div>
+              )}
 
-              {isLogin && (
-                <div className="flex justify-end text-xs">
-                  <a href="#" className="text-blue-600 font-semibold hover:underline">
+              {mode === 'reset' && (
+                <>
+                  <div className="floating-label-group">
+                    <input
+                      type="text"
+                      id="token"
+                      value={token}
+                      onChange={(e) => setToken(e.target.value)}
+                      className="w-full px-4 py-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none text-sm text-slate-800 transition-all"
+                      placeholder=" "
+                      required
+                    />
+                    <label htmlFor="token">Verification Token</label>
+                  </div>
+                  
+                  <div className="floating-label-group">
+                    <input
+                      type="password"
+                      id="newPassword"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full px-4 py-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none text-sm text-slate-800 transition-all"
+                      placeholder=" "
+                      required
+                    />
+                    <label htmlFor="newPassword">New Password</label>
+                  </div>
+                </>
+              )}
+
+              {mode === 'login' && (
+                <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-600 cursor-pointer"
+                    />
+                    <span>Remember me</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => { setMode('forgot'); setError(''); setSuccessMessage(''); }}
+                    className="text-blue-600 hover:underline cursor-pointer"
+                  >
                     Forgot password?
-                  </a>
+                  </button>
+                </div>
+              )}
+
+              {mode === 'forgot' && (
+                <div className="flex justify-end text-xs font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => { setMode('reset'); setError(''); setSuccessMessage(''); }}
+                    className="text-blue-600 hover:underline cursor-pointer"
+                  >
+                    Already have a token?
+                  </button>
+                </div>
+              )}
+
+              {mode === 'reset' && (
+                <div className="flex justify-end text-xs font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => { setMode('forgot'); setError(''); setSuccessMessage(''); }}
+                    className="text-blue-600 hover:underline cursor-pointer"
+                  >
+                    Request a new token
+                  </button>
                 </div>
               )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 disabled:opacity-50"
+                className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 disabled:opacity-50 cursor-pointer"
               >
                 {loading && (
                   <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -210,7 +353,10 @@ export default function LoginPage() {
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 )}
-                {isLogin ? 'Sign In to AssetFlow' : 'Create AssetFlow Account'}
+                {mode === 'login' && 'Sign In to AssetFlow'}
+                {mode === 'signup' && 'Create AssetFlow Account'}
+                {mode === 'forgot' && 'Get Reset Token'}
+                {mode === 'reset' && 'Reset Password'}
                 <span className="material-symbols-outlined text-xl">arrow_forward</span>
               </button>
             </form>
