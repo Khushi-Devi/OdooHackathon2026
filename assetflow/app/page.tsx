@@ -184,7 +184,7 @@ export default function DashboardPage() {
             </div>
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">My Allocated Assets</h4>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-extrabold text-slate-900">{myAllocated}</span>
+              <span className="text-5xl font-black text-slate-900">{myAllocated}</span>
               <span className="text-xs text-slate-400 font-bold">active</span>
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function DashboardPage() {
             </div>
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">My Active Bookings</h4>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-extrabold text-slate-900">{myBookings}</span>
+              <span className="text-5xl font-black text-slate-900">{myBookings}</span>
               <span className="text-xs text-slate-400 font-bold">scheduled</span>
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function DashboardPage() {
             </div>
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">My Open Tickets</h4>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-extrabold text-slate-900">{myMaintenance}</span>
+              <span className="text-5xl font-black text-slate-900">{myMaintenance}</span>
               <span className="text-xs text-slate-400 font-bold">in progress</span>
             </div>
           </div>
@@ -430,13 +430,8 @@ export default function DashboardPage() {
           </div>
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Assets Available</h4>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="text-3xl font-extrabold text-slate-900">{stats.available}</span>
+            <span className="text-5xl font-black text-slate-900">{stats.available}</span>
             <span className="text-sm text-slate-400">/ {stats.total}</span>
-          </div>
-          <div className="mt-4 h-12 w-full opacity-60 group-hover:opacity-100 transition-opacity">
-            <svg className="w-full h-full text-blue-600 stroke-current fill-none" preserveAspectRatio="none" viewBox="0 0 100 20">
-              <path d="M0 15 Q 10 12, 20 18 T 40 10 T 60 14 T 80 5 T 100 12" strokeLinecap="round" strokeWidth="2" />
-            </svg>
           </div>
         </div>
 
@@ -455,13 +450,8 @@ export default function DashboardPage() {
           </div>
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Assets Allocated</h4>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="text-3xl font-extrabold text-slate-900">{stats.allocated}</span>
+            <span className="text-5xl font-black text-slate-900">{stats.allocated}</span>
             <span className="text-xs text-slate-400 font-bold">active</span>
-          </div>
-          <div className="mt-4 h-12 w-full opacity-60 group-hover:opacity-100 transition-opacity">
-            <svg className="w-full h-full text-slate-500 stroke-current fill-none" preserveAspectRatio="none" viewBox="0 0 100 20">
-              <path d="M0 5 Q 10 8, 20 4 T 40 12 T 60 8 T 80 15 T 100 10" strokeLinecap="round" strokeWidth="2" />
-            </svg>
           </div>
         </div>
 
@@ -477,13 +467,8 @@ export default function DashboardPage() {
           </div>
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Maintenance Today</h4>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="text-3xl font-extrabold text-slate-900">{stats.maintenance}</span>
+            <span className="text-5xl font-black text-slate-900">{stats.maintenance}</span>
             <span className="text-xs text-slate-400 font-bold">tickets</span>
-          </div>
-          <div className="mt-4 h-12 w-full opacity-60 group-hover:opacity-100 transition-opacity">
-            <svg className="w-full h-full text-orange-500 stroke-current fill-none" preserveAspectRatio="none" viewBox="0 0 100 20">
-              <path d="M0 18 Q 10 5, 20 15 T 40 8 T 60 12 T 80 4 T 100 18" strokeLinecap="round" strokeWidth="2" />
-            </svg>
           </div>
         </div>
 
@@ -502,13 +487,8 @@ export default function DashboardPage() {
           </div>
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Bookings</h4>
           <div className="flex items-baseline gap-2 mt-1">
-            <span className="text-3xl font-extrabold text-slate-900">{stats.activeBookings}</span>
+            <span className="text-5xl font-black text-slate-900">{stats.activeBookings}</span>
             <span className="text-xs text-slate-400 font-bold font-bold">this week</span>
-          </div>
-          <div className="mt-4 h-12 w-full opacity-60 group-hover:opacity-100 transition-opacity">
-            <svg className="w-full h-full text-blue-500 stroke-current fill-none" preserveAspectRatio="none" viewBox="0 0 100 20">
-              <path d="M0 15 L 10 12 L 20 18 L 40 5 L 60 10 L 80 2 L 100 8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-            </svg>
           </div>
         </div>
       </div>
