@@ -9,21 +9,94 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Counts
+    if (session.role === 'Employee') {
+      // 1. My Allocated Assets count
+      const myAllocatedCount = await prisma.allocation.count({
+        where: {
+          employeeId: session.id,
+          status: 'Active'
+        }
+      });
+
+      // 2. My Upcoming Bookings count
+      const myBookingsCount = await prisma.booking.count({
+        where: {
+          employeeId: session.id,
+          status: { in: ['Upcoming', 'Active'] }
+        }
+      });
+
+      // 3. My Open Maintenance Requests count
+      const myMaintenanceCount = await prisma.maintenanceRequest.count({
+        where: {
+          requestedById: session.id,
+          status: { in: ['Raised', 'Approved', 'Assigned', 'InProgress'] }
+        }
+      });
+
+      // 4. My Active Allocations (Assets currently held)
+      const myAllocations = await prisma.allocation.findMany({
+        where: {
+          employeeId: session.id,
+          status: 'Active'
+        },
+        include: {
+          asset: {
+            include: { category: true }
+          }
+        },
+        orderBy: { allocatedAt: 'desc' }
+      });
+
+      // 5. My Bookings (upcoming & past)
+      const myBookings = await prisma.booking.findMany({
+        where: {
+          employeeId: session.id
+        },
+        include: {
+          asset: true
+        },
+        orderBy: { startTs: 'asc' }
+      });
+
+      // 6. My Maintenance requests
+      const myMaintenance = await prisma.maintenanceRequest.findMany({
+        where: {
+          requestedById: session.id
+        },
+        include: {
+          asset: true,
+          assignedTo: true
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+
+      return NextResponse.json({
+        role: 'Employee',
+        stats: {
+          myAllocated: myAllocatedCount,
+          myBookings: myBookingsCount,
+          myMaintenance: myMaintenanceCount
+        },
+        myAllocations,
+        myBookings,
+        myMaintenance
+      });
+    }
+
+    // Admin and Manager Dashboard Data (Enterprise-wide)
     const totalAssets = await prisma.asset.count();
     const availableAssets = await prisma.asset.count({ where: { status: 'Available' } });
     const allocatedAssets = await prisma.asset.count({ where: { status: 'Allocated' } });
     const maintenanceAssets = await prisma.asset.count({ where: { status: 'Maintenance' } });
     const retiredAssets = await prisma.asset.count({ where: { status: 'Retired' } });
 
-    // Active Bookings
     const activeBookings = await prisma.booking.count({
       where: {
         status: { in: ['Upcoming', 'Active'] }
       }
     });
 
-    // Recent Allocations
     const recentAllocations = await prisma.allocation.findMany({
       take: 5,
       include: {
@@ -33,7 +106,6 @@ export async function GET() {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Construct a list of activities
     const activities = recentAllocations.map(alloc => ({
       id: alloc.id,
       title: alloc.status === 'Active' ? `${alloc.asset.name} Deployment` : `${alloc.asset.name} Return`,
@@ -44,7 +116,6 @@ export async function GET() {
       icon: alloc.asset.tag.includes('Router') || alloc.asset.name.includes('Router') ? 'router' : 'laptop_mac'
     }));
 
-    // Maintenance today requests
     const maintenanceToday = await prisma.maintenanceRequest.findMany({
       where: {
         status: { in: ['Raised', 'Approved', 'Assigned', 'InProgress'] }
@@ -58,7 +129,6 @@ export async function GET() {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Upcoming returns
     const upcomingReturns = await prisma.allocation.findMany({
       where: {
         status: 'Active'
@@ -72,6 +142,7 @@ export async function GET() {
     });
 
     return NextResponse.json({
+      role: session.role,
       stats: {
         total: totalAssets,
         available: availableAssets,

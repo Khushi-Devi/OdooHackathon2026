@@ -28,8 +28,10 @@ export default function Sidebar() {
 
   const navItems = [
     { label: 'Dashboard', path: '/', icon: 'dashboard' },
-    { label: 'Assets', path: '/assets', icon: 'inventory_2' },
-    { label: 'Allocation', path: '/allocation', icon: 'sync_alt' },
+    ...(user?.role !== 'Employee' ? [
+      { label: 'Assets', path: '/assets', icon: 'inventory_2' },
+      { label: 'Allocation', path: '/allocation', icon: 'sync_alt' }
+    ] : []),
     { label: 'Bookings', path: '/bookings', icon: 'event_available' },
     { label: 'Maintenance', path: '/maintenance', icon: 'build' },
   ];
@@ -67,15 +69,17 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="px-6 py-4">
-        <button
-          onClick={triggerNewAsset}
-          className="w-full py-3 px-4 bg-blue-600 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all active:scale-[0.98]"
-        >
-          <span className="material-symbols-outlined text-base">add</span>
-          Add New Asset
-        </button>
-      </div>
+      {user && user.role !== 'Employee' && (
+        <div className="px-6 py-4">
+          <button
+            onClick={triggerNewAsset}
+            className="w-full py-3 px-4 bg-blue-600 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all active:scale-[0.98]"
+          >
+            <span className="material-symbols-outlined text-base">add</span>
+            Add New Asset
+          </button>
+        </div>
+      )}
 
       <div className="mt-auto p-4 border-t border-slate-200 space-y-1">
         {user && (
